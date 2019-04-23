@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import AuthController from '~/routes/controllers/Auth';
-import { AuthGuard } from '~/routes/middlewares/AuthGuard';
+import AuthController from '~/route/controllers/Auth';
+import { AuthGuard } from '~/route/middleware/AuthGuard';
 
 export const routes = (router: Router) => {
   router.get('/auth/current', AuthGuard, AuthController.CurrentAuth);
