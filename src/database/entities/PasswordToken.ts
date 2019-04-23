@@ -20,7 +20,7 @@ export class PasswordToken extends BaseEntity {
 
   @OneToOne(() => UserAccount)
   @JoinColumn()
-  public userAccount: UserAccount;
+  public userAccount: UserAccount | string;
 
   @Column({ type: 'datetime' })
   public expiresIn: Date;

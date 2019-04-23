@@ -7,8 +7,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-type ProviderType = 'local' | 'google' | 'facebook';
-
 @Entity()
 export class UserAccount extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -19,24 +17,21 @@ export class UserAccount extends BaseEntity {
     enum: ['local', 'google', 'facebook'],
     default: 'local',
   })
-  public provider: ProviderType;
-
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
-  public providerId: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  public name: string;
+  public provider: 'local' | 'google' | 'facebook';
 
   @Column({ type: 'varchar', nullable: true })
-  public avatar: string;
+  public providerId: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
+  @Column({ type: 'varchar' })
   public email: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'boolean', width: 1, default: 'false' })
+  public emailVerified: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
   public password: string;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn()
   public createdAt: Date;
 
   @UpdateDateColumn()
