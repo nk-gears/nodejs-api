@@ -5,6 +5,7 @@
 // import { signToken } from '~/utils/token';
 // import { UserAuth } from '~/database/entities/UserAuth';
 // import { UserAccount } from '~/database/entities/UserAccount';
+// import { UserProfile } from '~/database/entities/UserProfile';
 
 // export const SignUpWithEmail = async (
 //   req: Request,
@@ -25,20 +26,25 @@
 
 //       const hashedPassword = await hashPassword(password);
 
-//       const userInsert = await manager.insert(UserAuth, {
+//       const userProfileInsert = await manager.insert(UserProfile, {
+//         name,
+//       });
+//       const userAccountInsert = await manager.insert(UserAccount, {
+//         username,
+//         userProfile: userProfileInsert.identifiers[0].id,
+//       });
+//       await manager.insert(UserAuth, {
 //         email,
 //         password: hashedPassword,
 //         provider: 'local',
-//         userAccount: {
-//           username,
-//           userProfile: { name },
-//         },
+//         userAccount: userAccountInsert.identifiers[0].id,
 //       });
 
 //       const user = await manager.findOneOrFail(UserAccount, {
-//         where: { userAuth: { id: userInsert.identifiers[0].id } },
+//         where: { id: userAccountInsert.identifiers[0].id },
 //         relations: ['userAuth', 'userProfile'],
 //       });
+
 //       // delete user.password;
 //       return res.send({ user });
 

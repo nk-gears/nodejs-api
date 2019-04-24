@@ -7,10 +7,10 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { UserAccount } from './UserAccount';
+import { Account } from './Account';
 
 @Entity()
-export class UserAuth extends BaseEntity {
+export class Provider extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
@@ -30,10 +30,8 @@ export class UserAuth extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   public password: string;
 
-  @ManyToOne(() => UserAccount, userAccount => userAccount.userAuth, {
-    cascade: ['insert'],
-  })
-  public userAccount: UserAccount;
+  @ManyToOne(() => Account, account => account.provider)
+  public account: Account;
 
   @CreateDateColumn()
   public createdAt: Date;
