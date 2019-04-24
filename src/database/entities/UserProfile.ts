@@ -21,12 +21,14 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'enum', enum: ['male', 'female'], nullable: true })
   public gender: 'male' | 'female';
 
-  @Column({ type: 'json', nullable: true })
-  public address: {
-    cityOrRegency: string;
-    province: string;
-    country: string;
-  };
+  @Column({ type: 'varchar', nullable: true })
+  public cityOrRegency: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  public province: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  public country: string;
 
   @CreateDateColumn()
   public createdAt: Date;

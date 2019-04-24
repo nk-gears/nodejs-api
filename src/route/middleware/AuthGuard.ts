@@ -12,7 +12,10 @@ export const AuthGuard = async (
     const token = await extractToken(req);
     const decoded = await verifyToken(token);
 
-    const user = await UserAccount.findOne({ where: { id: decoded.id } });
+    const user = await UserAccount.findOne({
+      where: { id: decoded.id },
+      relations: ['userAccount', 'userAuth'],
+    });
 
     if (!user) {
       throw createError(
