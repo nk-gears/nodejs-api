@@ -2,10 +2,8 @@
 // import dateFns from 'date-fns';
 // import { NextFunction, Request, Response } from 'express';
 // import { getConnection } from 'typeorm';
-// import { PasswordToken } from '~/database/entities/PasswordToken';
-// import { UserAccount } from '~/database/entities/UserAccount';
 // import { sendResetPassword } from '~/services/mail';
-// import { createCatchError, createError } from '~/utils/error';
+// import { handleCatchError, handleError } from '~/utils/error';
 
 // export const ForgotPassword = async (
 //   req: Request,

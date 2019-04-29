@@ -4,12 +4,12 @@ const DEFAULT_CODE = 'ERR_UNEXPECTED';
 const DEFAULT_MESSAGE = 'Something wrong';
 
 /**
- * Create error helper
+ * Error helper
  * @param status error status code, ex.: 400, 403, 500
  * @param code error code, ex.: ERR_UNEXPECTED
  * @param message more detailed error information
  */
-export const createError = (
+export const handleError = (
   status: number = 500,
   code: string | any = DEFAULT_CODE,
   message: string | any = DEFAULT_MESSAGE,
@@ -18,10 +18,10 @@ export const createError = (
 };
 
 /**
- * Create catch error helper use in try/catch
+ * Catch error helper used in try/catch
  * @param error `status`, `code`, `message`
  */
-export const createCatchError = ({
+export const handleCatchError = ({
   status = 500,
   code = DEFAULT_CODE,
   message = DEFAULT_MESSAGE,

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
-import { createError } from './error';
+import { handleError } from './error';
 
 /**
  * Sign JWT Token
@@ -9,14 +9,16 @@ import { createError } from './error';
  * @throws 500: ERR_SIGN_TOKEN
  */
 export const signToken = (id: string): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const token = await jwt.sign({ id }, process.env.JWT_SECRET_KEY);
-      return resolve(token);
-    } catch (error) {
-      return reject(createError(500, 'ERR_SIGN_TOKEN', error.message));
-    }
-  });
+  return new Promise(
+    async (resolve, reject): Promise<any> => {
+      try {
+        const token = await jwt.sign({ id }, process.env.JWT_SECRET_KEY);
+        return resolve(token);
+      } catch (error) {
+        return reject(handleError(500, 'ERR_SIGN_TOKEN', error.message));
+      }
+    },
+  );
 };
 
 /**
@@ -26,14 +28,16 @@ export const signToken = (id: string): Promise<string> => {
  * @throws 400: INVALID_TOKEN
  */
 export const verifyToken = (token: string): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const decoded = await jwt.verify(token, process.env.JWT_SECRET_KEY);
-      return resolve(decoded);
-    } catch (error) {
-      return reject(createError(400, 'INVALID_TOKEN', error.message));
-    }
-  });
+  return new Promise(
+    async (resolve, reject): Promise<any> => {
+      try {
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET_KEY);
+        return resolve(decoded);
+      } catch (error) {
+        return reject(handleError(400, 'ERR_VERIFY_TOKEN', error.message));
+      }
+    },
+  );
 };
 
 /**
@@ -43,35 +47,37 @@ export const verifyToken = (token: string): Promise<any> => {
  * @throws 500: ERR_EXTRACT_TOKEN
  */
 export const extractToken = (req: Request): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const authHeader = req.headers.authorization;
+  return new Promise(
+    (resolve, reject): any => {
+      try {
+        const authHeader = req.headers.authorization;
 
-      if (!authHeader) {
-        return reject(
-          createError(
-            400,
-            'ERR_AUTH_HEADER',
-            'cannot get token on authorization header',
-          ),
-        );
+        if (!authHeader) {
+          return reject(
+            handleError(
+              400,
+              'ERR_AUTH_HEADER',
+              'cannot get token on authorization header',
+            ),
+          );
+        }
+
+        const token = authHeader.split(' ')[1];
+
+        if (!token) {
+          return reject(
+            handleError(
+              400,
+              'ERR_SPLIT_AUTH_HEADER',
+              'cannot split token on authorization header',
+            ),
+          );
+        }
+
+        return resolve(token);
+      } catch (error) {
+        return reject(handleError(500, 'ERR_EXTRACT_TOKEN', error.message));
       }
-
-      const token = authHeader.split(' ')[1];
-
-      if (!token) {
-        return reject(
-          createError(
-            400,
-            'ERR_SPLIT_AUTH_HEADER',
-            'cannot split token on authorization header',
-          ),
-        );
-      }
-
-      return resolve(token);
-    } catch (error) {
-      return reject(createError(500, 'ERR_EXTRACT_TOKEN', error.message));
-    }
-  });
+    },
+  );
 };
