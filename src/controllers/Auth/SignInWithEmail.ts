@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
+import * as UserAccount from '~/queries/UserAccount';
+import { db } from '~/services/db';
 import { handleCatchError, handleError } from '~/utils/error';
 import { comparePassword } from '~/utils/password';
 import { signToken } from '~/utils/token';
-import { db } from '~/services/db';
-import * as UserAccount from '~/queries/UserAccount';
 
 export const SignInWithEmail = async (
   req: Request,
@@ -35,6 +35,7 @@ export const SignInWithEmail = async (
       [userFound.id],
     );
     const user = users[0];
+    delete user.password;
 
     const token = await signToken(user.id);
 
