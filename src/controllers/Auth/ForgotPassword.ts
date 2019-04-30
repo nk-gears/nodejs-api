@@ -41,11 +41,11 @@ export const ForgotPassword = async (
       );
       const tokenType = tokenTypeRows[0];
 
-      const [tokenFoundRow] = await conn.execute(
+      const [tokenFoundRows] = await conn.execute(
         Token.findOneResetPasswordToken,
         [userFound.id],
       );
-      const tokenFound = tokenFoundRow[0];
+      const tokenFound = tokenFoundRows[0];
 
       const buf = await randomBytes(32);
       const token = buf.toString('hex');
