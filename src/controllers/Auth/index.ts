@@ -3,7 +3,7 @@ import { SignUpWithEmail } from './SignUpWithEmail';
 import { SignInWithEmail } from './SignInWithEmail';
 import { ForgotPassword } from './ForgotPassword';
 import { CheckPasswordToken } from './CheckPasswordToken';
-// import { ResetPassword } from './ResetPassword';
+import { ResetPassword } from './ResetPassword';
 // import { SignInOrSignUpWithGoogle } from './SignInOrSignUpWithGoogle';
 
 export default {
@@ -12,6 +12,6 @@ export default {
   SignInWithEmail,
   ForgotPassword,
   CheckPasswordToken,
-  //   ResetPassword,
+  ResetPassword,
   //   SignInOrSignUpWithGoogle,
 };

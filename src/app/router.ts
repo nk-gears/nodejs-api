@@ -10,7 +10,7 @@ const routes = (router: Router): Router => {
     '/auth/local/check-password-token',
     AuthController.CheckPasswordToken,
   );
-  // router.post('/auth/local/reset-password', AuthController.ResetPassword);
+  router.post('/auth/local/reset-password', AuthController.ResetPassword);
   // router.post('/auth/google', AuthController.SignInOrSignUpWithGoogle);
 
   return router;

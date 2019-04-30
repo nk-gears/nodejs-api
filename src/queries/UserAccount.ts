@@ -84,3 +84,10 @@ export const findOneWithProfileAndSocialProvider = `
   WHERE ua.id = UUID_TO_BIN(?, 1)
   GROUP BY ua.id, up.id
 `;
+
+export const updateOneById = `
+  UPDATE user_account
+  SET ?
+  WHERE
+    id = UUID_TO_BIN(?, 1)
+`;

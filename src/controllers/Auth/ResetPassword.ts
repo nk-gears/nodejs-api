@@ -1,46 +1,52 @@
-// import { NextFunction, Request, Response } from 'express';
-// import { PasswordToken } from '~/database/entities/PasswordToken';
-// import { UserAccount } from '~/database/entities/UserAccount';
-// import { createCatchError, createError } from '~/utils/error';
-// import { hashPassword } from '~/utils/password';
+import { NextFunction, Request, Response } from 'express';
+import { handleCatchError, handleError } from '~/utils/error';
+import { hashPassword } from '~/utils/password';
+import * as Token from '~/queries/Token';
+import { db } from '~/services/db';
+import * as UserAccount from '~/queries/UserAccount';
+import mysql from 'mysql2';
 
-// export const ResetPassword = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ): Promise<any> => {
-//   const { password, confirmPassword, userId, token } = req.body;
+export const ResetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  const { password, confirmPassword, userId, token } = req.body;
 
-//   try {
-//     const passwordToken = await PasswordToken.findOne({
-//       where: { userAccount: userId },
-//     });
+  try {
+    const [tokenFoundRows] = await db.execute(Token.findOneResetPasswordToken, [
+      userId,
+    ]);
+    const tokenFound = tokenFoundRows[0];
 
-//     if (passwordToken && passwordToken.token !== token) {
-//       throw createError(
-//         400,
-//         'INVALID_PASSWORD_TOKEN',
-//         'password token is invalid',
-//       );
-//     }
+    if (tokenFound && tokenFound.token !== token) {
+      throw handleError(
+        400,
+        'INVALID_PASSWORD_TOKEN',
+        'password token is invalid',
+      );
+    }
 
-//     if (password !== confirmPassword) {
-//       throw createError(400, 'PASSWORD_NOT_MATCH', 'password does not match');
-//     }
+    if (password !== confirmPassword) {
+      throw handleError(400, 'PASSWORD_NOT_MATCH', 'password does not match');
+    }
 
-//     const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
-//     const user = await UserAccount.update(
-//       { id: userId },
-//       { password: hashedPassword },
-//     );
+    await db.execute(
+      mysql.format(UserAccount.updateOneById, [
+        {
+          password: hashedPassword,
+        },
+        userId,
+      ]),
+    );
 
-//     return res.send({
-//       success: true,
-//       message: 'password has been reset',
-//       ...user,
-//     });
-//   } catch (error) {
-//     return next(createCatchError(error));
-//   }
-// };
+    return res.send({
+      success: true,
+      message: 'password has been reset',
+    });
+  } catch (error) {
+    return next(handleCatchError(error));
+  }
+};
