@@ -1,13 +1,13 @@
 import { randomBytes } from 'crypto';
 import { NextFunction, Request, Response } from 'express';
-import { sendResetPassword } from '~/services/mail';
-import { handleCatchError, handleError } from '~/utils/error';
-import { db } from '~/services/db';
-import * as UserAccount from '~/queries/UserAccount';
+import uuid from 'uuid';
 import * as Token from '~/queries/Token';
 import * as TokenType from '~/queries/TokenType';
+import * as UserAccount from '~/queries/UserAccount';
+import { db } from '~/services/db';
+import { sendResetPassword } from '~/services/mail';
+import { handleCatchError, handleError } from '~/utils/error';
 import { toSqlString } from '~/utils/sql';
-import uuid from 'uuid';
 
 export const ForgotPassword = async (
   req: Request,
@@ -22,8 +22,10 @@ export const ForgotPassword = async (
     try {
       await conn.beginTransaction();
 
-      const [usersFound] = await conn.execute(UserAccount.findByEmail, [email]);
-      const userFound = usersFound[0];
+      const [userFoundRows] = await conn.execute(UserAccount.findByEmail, [
+        email,
+      ]);
+      const userFound = userFoundRows[0];
 
       if (!userFound) {
         throw handleError(
@@ -33,10 +35,11 @@ export const ForgotPassword = async (
         );
       }
 
-      const [tokenTypes] = await conn.execute(TokenType.findTokenTypeByType, [
-        'reset_password',
-      ]);
-      const tokenType = tokenTypes[0];
+      const [tokenTypeRows] = await conn.execute(
+        TokenType.findTokenTypeByType,
+        ['reset_password'],
+      );
+      const tokenType = tokenTypeRows[0];
 
       const [tokenFoundRow] = await conn.execute(
         Token.findOneResetPasswordToken,
@@ -46,13 +49,14 @@ export const ForgotPassword = async (
 
       const buf = await randomBytes(32);
       const token = buf.toString('hex');
+
+      const tokenId = uuid.v1();
       const data = {
         token,
         expires_in: toSqlString('DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)'),
         token_type_id: tokenType.id,
         user_account_id: toSqlString(`UUID_TO_BIN('${userFound.id}', 1)`),
       };
-      const tokenId = uuid.v1();
       if (!tokenFound) {
         Object.assign(data, {
           id: toSqlString(`UUID_TO_BIN('${tokenId}', 1)`),
@@ -61,11 +65,11 @@ export const ForgotPassword = async (
 
       await conn.execute(conn.format(Token.replaceToken, [data]));
 
-      const [userAccountWithProfileRow] = await conn.execute(
+      const [userAccountWithProfileRows] = await conn.execute(
         UserAccount.findOneWithProfile,
         [userFound.id],
       );
-      const user = userAccountWithProfileRow[0];
+      const user = userAccountWithProfileRows[0];
 
       const mailResult = await sendResetPassword(user.name, user.email, token);
 
