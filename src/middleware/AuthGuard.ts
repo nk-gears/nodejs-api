@@ -13,10 +13,12 @@ export const AuthGuard = async (
     const token = await extractToken(req);
     const decoded = await verifyToken(token);
 
-    const user = await db.execute(
+    const [userRows] = await db.execute(
       UserAccount.findOneWithProfileAndSocialProvider,
       [decoded.id],
     );
+    const user = userRows[0];
+    delete user.password;
 
     if (!user) {
       throw handleError(
