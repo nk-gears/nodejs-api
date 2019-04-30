@@ -73,7 +73,8 @@ export const ForgotPassword = async (
 
       const mailResult = await sendResetPassword(user.name, user.email, token);
 
-      await conn.rollback();
+      await conn.commit();
+
       return res.send(mailResult);
     } catch (error) {
       await conn.rollback();
