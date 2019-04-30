@@ -58,11 +58,11 @@ export const SignUpWithEmail = async (
         ]),
       );
 
-      const [users] = await conn.execute(
+      const [userRows] = await conn.execute(
         UserAccount.findOneWithProfileAndSocialProvider,
         [userAccountId],
       );
-      const user = users[0];
+      const user = userRows[0];
       delete user.password;
 
       await conn.commit();
