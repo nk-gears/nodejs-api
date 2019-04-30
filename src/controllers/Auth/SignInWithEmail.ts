@@ -13,8 +13,8 @@ export const SignInWithEmail = async (
   const { email, password } = req.body;
 
   try {
-    const [usersFound] = await db.execute(UserAccount.findByEmail, [email]);
-    const userFound = usersFound[0];
+    const [userFoundRows] = await db.execute(UserAccount.findByEmail, [email]);
+    const userFound = userFoundRows[0];
 
     if (!userFound) {
       throw handleError(
@@ -30,11 +30,11 @@ export const SignInWithEmail = async (
       throw handleError(400, 'PASSWORD_NOT_MATCH', 'password does not match');
     }
 
-    const [users] = await db.execute(
+    const [userRows] = await db.execute(
       UserAccount.findOneWithProfileAndSocialProvider,
       [userFound.id],
     );
-    const user = users[0];
+    const user = userRows[0];
     delete user.password;
 
     const token = await signToken(user.id);
