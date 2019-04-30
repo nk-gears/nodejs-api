@@ -5,7 +5,7 @@ const routes = (router: Router): Router => {
   // router.get('/auth/current', AuthGuard, AuthController.CurrentAuth);
   router.post('/auth/local/signup', AuthController.SignUpWithEmail);
   router.post('/auth/local/signin', AuthController.SignInWithEmail);
-  // router.post('/auth/local/forgot-password', AuthController.ForgotPassword);
+  router.post('/auth/local/forgot-password', AuthController.ForgotPassword);
   // router.post(
   //   '/auth/local/check-password-token',
   //   AuthController.CheckPasswordToken,

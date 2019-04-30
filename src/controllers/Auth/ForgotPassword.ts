@@ -1,71 +1,83 @@
-// import { randomBytes } from 'crypto';
-// import dateFns from 'date-fns';
-// import { NextFunction, Request, Response } from 'express';
-// import { getConnection } from 'typeorm';
-// import { sendResetPassword } from '~/services/mail';
-// import { handleCatchError, handleError } from '~/utils/error';
+import { randomBytes } from 'crypto';
+import { NextFunction, Request, Response } from 'express';
+import { sendResetPassword } from '~/services/mail';
+import { handleCatchError, handleError } from '~/utils/error';
+import { db } from '~/services/db';
+import * as UserAccount from '~/queries/UserAccount';
+import * as Token from '~/queries/Token';
+import * as TokenType from '~/queries/TokenType';
+import { toSqlString } from '~/utils/sql';
+import uuid from 'uuid';
 
-// export const ForgotPassword = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ): Promise<any> => {
-//   const { email } = req.body;
+export const ForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  const { email } = req.body;
 
-//   try {
-//     return await getConnection().transaction(async manager => {
-//       const userFound = await manager.findOne(UserAccount, {
-//         where: { email },
-//       });
+  try {
+    const conn = await db.getConnection();
 
-//       if (!userFound) {
-//         throw createError(
-//           404,
-//           'EMAIL_NOT_FOUND',
-//           'user with this email does not exists',
-//         );
-//       }
+    try {
+      await conn.beginTransaction();
 
-//       const passwordToken = await manager.findOne(PasswordToken, {
-//         where: { userAccount: userFound.id },
-//       });
+      const [usersFound] = await conn.execute(UserAccount.findByEmail, [email]);
+      const userFound = usersFound[0];
 
-//       const buf = await randomBytes(32);
-//       const token = buf.toString('hex');
-//       const expiresIn = dateFns.addMinutes(new Date(), 60);
+      if (!userFound) {
+        throw handleError(
+          404,
+          'EMAIL_NOT_FOUND',
+          'user with this email does not exists',
+        );
+      }
 
-//       if (passwordToken && passwordToken.token) {
-//         await manager.update(
-//           PasswordToken,
-//           { id: passwordToken.id },
-//           { token, expiresIn },
-//         );
-//       } else {
-//         await manager.insert(PasswordToken, {
-//           token,
-//           userAccount: userFound,
-//           expiresIn,
-//         });
-//       }
+      const [tokenTypes] = await conn.execute(TokenType.findTokenTypeByType, [
+        'reset_password',
+      ]);
+      const tokenType = tokenTypes[0];
 
-//       const passwordTokenWithUser = await manager.findOne(PasswordToken, {
-//         where: { userAccount: userFound.id },
-//         relations: ['userAccount'],
-//       });
+      const [tokenFoundRow] = await conn.execute(
+        Token.findOneResetPasswordToken,
+        [userFound.id],
+      );
+      const tokenFound = tokenFoundRow[0];
 
-//       delete passwordTokenWithUser.userAccount.password;
+      const buf = await randomBytes(32);
+      const token = buf.toString('hex');
+      const data = {
+        token,
+        expires_in: toSqlString('DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)'),
+        token_type_id: tokenType.id,
+        user_account_id: toSqlString(`UUID_TO_BIN('${userFound.id}', 1)`),
+      };
+      const tokenId = uuid.v1();
+      if (!tokenFound) {
+        Object.assign(data, {
+          id: toSqlString(`UUID_TO_BIN('${tokenId}', 1)`),
+        });
+      }
 
-//       const user = passwordTokenWithUser.userAccount;
+      await conn.execute(conn.format(Token.replaceToken, [data]));
 
-//       const mailResult = await sendResetPassword(
-//         user.name,
-//         user.email,
-//         passwordTokenWithUser.token,
-//       );
+      const [userAccountWithProfileRow] = await conn.execute(
+        UserAccount.findOneWithProfile,
+        [userFound.id],
+      );
+      const user = userAccountWithProfileRow[0];
 
-//       return res.send(mailResult);
-//     });
-//   } catch (error) {
-//     return next(createCatchError(error));
-//   }
-// };
+      const mailResult = await sendResetPassword(user.name, user.email, token);
+
+      await conn.rollback();
+      return res.send(mailResult);
+    } catch (error) {
+      await conn.rollback();
+      throw handleCatchError(error);
+    } finally {
+      await conn.release();
+    }
+  } catch (error) {
+    return next(handleCatchError(error));
+  }
+};
