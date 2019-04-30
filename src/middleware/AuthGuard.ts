@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import * as UserAccount from '~/queries/UserAccount';
 import { db } from '~/services/db';
 import { handleCatchError, handleError } from '~/utils/error';
 import { extractToken, verifyToken } from '~/utils/token';
@@ -13,9 +14,7 @@ export const AuthGuard = async (
     const decoded = await verifyToken(token);
 
     const user = await db.execute(
-      `
-        SELECT * FROM user_account WHERE id = UUID_TO_BIN(?)
-      `,
+      UserAccount.findOneWithProfileAndSocialProvider,
       [decoded.id],
     );
 
