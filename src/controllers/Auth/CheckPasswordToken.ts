@@ -1,44 +1,46 @@
-// import { NextFunction, Request, Response } from 'express';
-// import { PasswordToken } from '~/database/entities/PasswordToken';
-// import { createCatchError, createError } from '~/utils/error';
+import { NextFunction, Request, Response } from 'express';
+import * as Token from '~/queries/Token';
+import { db } from '~/services/db';
+import { handleCatchError, handleError } from '~/utils/error';
 
-// export const CheckPasswordToken = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ): Promise<any> => {
-//   const { token } = req.body;
+export const CheckPasswordToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  const { token } = req.body;
 
-//   try {
-//     const passwordToken = await PasswordToken.findOne({
-//       where: { token },
-//       relations: ['userAccount'],
-//     });
+  try {
+    const [tokenCheckRows] = await db.execute(
+      Token.findOneResetPasswordTokenByToken,
+      [token],
+    );
+    const tokenCheck = tokenCheckRows[0];
 
-//     if (!passwordToken) {
-//       throw createError(
-//         400,
-//         'INVALID_PASSWORD_TOKEN',
-//         'password token is invalid',
-//       );
-//     }
+    if (!tokenCheck) {
+      throw handleError(
+        400,
+        'INVALID_PASSWORD_TOKEN',
+        'password token is invalid',
+      );
+    }
 
-//     const dateNow = new Date();
+    const dateNow = new Date();
 
-//     if (passwordToken && dateNow > passwordToken.expiresIn) {
-//       throw createError(
-//         400,
-//         'PASSWORD_TOKEN_EXPIRED',
-//         'password token is expired',
-//       );
-//     }
+    if (tokenCheck && dateNow > tokenCheck.expires_in) {
+      throw handleError(
+        400,
+        'PASSWORD_TOKEN_EXPIRED',
+        'password token is expired',
+      );
+    }
 
-//     return res.send({
-//       valid: true,
-//       token,
-//       userId: passwordToken.userAccount.id,
-//     });
-//   } catch (error) {
-//     return next(createCatchError(error));
-//   }
-// };
+    return res.send({
+      valid: true,
+      token,
+      user_account_id: tokenCheck.user_account_id,
+    });
+  } catch (error) {
+    return next(handleCatchError(error));
+  }
+};
