@@ -13,6 +13,7 @@ const routes = (router: Router): Router => {
   );
   router.post('/auth/local/reset-password', AuthController.ResetPassword);
   router.post('/auth/google/signup', AuthController.SignUpWithGoogle);
+  router.post('/auth/google/signin', AuthController.SignInWithGoogle);
 
   return router;
 };

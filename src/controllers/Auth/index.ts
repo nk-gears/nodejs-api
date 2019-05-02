@@ -5,6 +5,7 @@ import { ForgotPassword } from './ForgotPassword';
 import { CheckPasswordToken } from './CheckPasswordToken';
 import { ResetPassword } from './ResetPassword';
 import { SignUpWithGoogle } from './SignUpWithGoogle';
+import { SignInWithGoogle } from './SignInWithGoogle';
 
 export default {
   CurrentAuth,
@@ -14,4 +15,5 @@ export default {
   CheckPasswordToken,
   ResetPassword,
   SignUpWithGoogle,
+  SignInWithGoogle,
 };
