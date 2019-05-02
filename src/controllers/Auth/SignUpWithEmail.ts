@@ -27,11 +27,7 @@ export const SignUpWithEmail = async (
       const userAccount = userAccountRows[0];
 
       if (userAccount) {
-        throw handleError(
-          400,
-          'USER_LOCAL_PROVIDER_EXISTS',
-          'user with local provider is already exists',
-        );
+        throw handleError(400, 'USER_EXISTS', 'user is already exists');
       }
 
       const userAccountId = uuid.v1();
