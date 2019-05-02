@@ -1,5 +1,5 @@
 import { Express, Router } from 'express';
-import AuthController from '~/controllers/Auth';
+import { AuthController } from '~/controllers/Auth';
 import { AuthGuard } from '~/middleware/AuthGuard';
 
 const routes = (router: Router): Router => {

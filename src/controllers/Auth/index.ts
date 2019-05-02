@@ -7,7 +7,7 @@ import { ResetPassword } from './ResetPassword';
 import { SignUpWithGoogle } from './SignUpWithGoogle';
 import { SignInWithGoogle } from './SignInWithGoogle';
 
-export default {
+export const AuthController = {
   CurrentAuth,
   SignUpWithEmail,
   SignInWithEmail,
