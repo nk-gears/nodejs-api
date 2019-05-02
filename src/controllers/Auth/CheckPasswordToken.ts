@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { db } from '~/providers/db';
 import * as Token from '~/queries/Token';
-import { db } from '~/services/db';
 import { handleCatchError, handleError } from '~/utils/error';
 
 export const CheckPasswordToken = async (

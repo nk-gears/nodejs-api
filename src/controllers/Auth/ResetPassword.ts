@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import mysql from 'mysql2';
+import { db } from '~/providers/db';
+import * as Token from '~/queries/Token';
+import * as UserAccount from '~/queries/UserAccount';
 import { handleCatchError, handleError } from '~/utils/error';
 import { hashPassword } from '~/utils/password';
-import * as Token from '~/queries/Token';
-import { db } from '~/services/db';
-import * as UserAccount from '~/queries/UserAccount';
-import mysql from 'mysql2';
 
 export const ResetPassword = async (
   req: Request,

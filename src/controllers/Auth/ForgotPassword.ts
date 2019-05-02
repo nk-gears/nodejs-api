@@ -1,11 +1,11 @@
 import { randomBytes } from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import uuid from 'uuid';
+import { db } from '~/providers/db';
+import { sendResetPassword } from '~/providers/mail';
 import * as Token from '~/queries/Token';
 import * as TokenType from '~/queries/TokenType';
 import * as UserAccount from '~/queries/UserAccount';
-import { db } from '~/services/db';
-import { sendResetPassword } from '~/services/mail';
 import { handleCatchError, handleError } from '~/utils/error';
 import { toSqlString } from '~/utils/sql';
 
