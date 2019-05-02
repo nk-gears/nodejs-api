@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { db } from '~/providers/db';
-import * as SocialProvider from '~/queries/SocialProvider';
-import * as UserAccount from '~/queries/UserAccount';
+import { SocialProvider } from '~/queries/SocialProvider';
+import { UserAccount } from '~/queries/UserAccount';
 import { handleCatchError, handleError } from '~/utils/error';
 import { signToken } from '~/utils/token';
 

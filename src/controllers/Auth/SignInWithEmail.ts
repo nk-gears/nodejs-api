@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { db } from '~/providers/db';
-import * as UserAccount from '~/queries/UserAccount';
+import { UserAccount } from '~/queries/UserAccount';
 import { handleCatchError, handleError } from '~/utils/error';
 import { comparePassword } from '~/utils/password';
 import { signToken } from '~/utils/token';

@@ -16,3 +16,8 @@ export const findOneByAuthId = `
   WHERE
     auth_id = ?
 `;
+
+export const SocialProvider = {
+  insertOne,
+  findOneByAuthId,
+};

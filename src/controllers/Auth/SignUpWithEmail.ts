@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import uuid from 'uuid';
 import { db } from '~/providers/db';
-import * as UserAccount from '~/queries/UserAccount';
-import * as UserProfile from '~/queries/UserProfile';
+import { UserAccount } from '~/queries/UserAccount';
+import { UserProfile } from '~/queries/UserProfile';
 import { handleCatchError, handleError } from '~/utils/error';
 import { hashPassword } from '~/utils/password';
 import { toSqlString } from '~/utils/sql';

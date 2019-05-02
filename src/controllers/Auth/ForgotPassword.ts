@@ -3,9 +3,9 @@ import { NextFunction, Request, Response } from 'express';
 import uuid from 'uuid';
 import { db } from '~/providers/db';
 import { sendResetPassword } from '~/providers/mail';
-import * as Token from '~/queries/Token';
-import * as TokenType from '~/queries/TokenType';
-import * as UserAccount from '~/queries/UserAccount';
+import { Token } from '~/queries/Token';
+import { TokenType } from '~/queries/TokenType';
+import { UserAccount } from '~/queries/UserAccount';
 import { handleCatchError, handleError } from '~/utils/error';
 import { toSqlString } from '~/utils/sql';
 

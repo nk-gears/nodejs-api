@@ -1,9 +1,9 @@
-export const insertOne = `
+const insertOne = `
   INSERT INTO user_account
   SET ?
 `;
 
-export const findByEmail = `
+const findByEmail = `
   SELECT
     BIN_TO_UUID(id, 1) AS id,
     username,
@@ -17,7 +17,7 @@ export const findByEmail = `
     email = ?
 `;
 
-export const findOneWithProfile = `
+const findOneWithProfile = `
   SELECT
     BIN_TO_UUID(ua.id, 1) AS id,
     ua.username,
@@ -43,7 +43,7 @@ export const findOneWithProfile = `
   WHERE ua.id = UUID_TO_BIN(?, 1)
 `;
 
-export const findOneWithProfileAndSocialProvider = `
+const findOneWithProfileAndSocialProvider = `
   SELECT
     BIN_TO_UUID(ua.id, 1) AS id,
     ua.username,
@@ -85,9 +85,17 @@ export const findOneWithProfileAndSocialProvider = `
   GROUP BY ua.id, up.id
 `;
 
-export const updateOneById = `
+const updateOneById = `
   UPDATE user_account
   SET ?
   WHERE
     id = UUID_TO_BIN(?, 1)
 `;
+
+export const UserAccount = {
+  insertOne,
+  findByEmail,
+  findOneWithProfile,
+  findOneWithProfileAndSocialProvider,
+  updateOneById,
+};

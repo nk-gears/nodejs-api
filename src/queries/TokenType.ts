@@ -1,4 +1,4 @@
-export const findTokenTypeByType = `
+const findTokenTypeByType = `
   SELECT
     id,
     type
@@ -7,3 +7,7 @@ export const findTokenTypeByType = `
   WHERE
     type = ?
 `;
+
+export const TokenType = {
+  findTokenTypeByType,
+};

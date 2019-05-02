@@ -61,3 +61,10 @@ export const findOneResetPasswordTokenWithUser = `
     AND
     t.id = UUID_TO_BIN(?, 1)
 `;
+
+export const Token = {
+  findOneResetPasswordToken,
+  findOneResetPasswordTokenByToken,
+  findOneResetPasswordTokenWithUser,
+  replaceToken,
+};
