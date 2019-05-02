@@ -12,7 +12,7 @@ const routes = (router: Router): Router => {
     AuthController.CheckPasswordToken,
   );
   router.post('/auth/local/reset-password', AuthController.ResetPassword);
-  // router.post('/auth/google', AuthController.SignInOrSignUpWithGoogle);
+  router.post('/auth/google/signup', AuthController.SignUpWithGoogle);
 
   return router;
 };

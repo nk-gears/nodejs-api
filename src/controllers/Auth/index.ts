@@ -4,7 +4,7 @@ import { SignInWithEmail } from './SignInWithEmail';
 import { ForgotPassword } from './ForgotPassword';
 import { CheckPasswordToken } from './CheckPasswordToken';
 import { ResetPassword } from './ResetPassword';
-// import { SignInOrSignUpWithGoogle } from './SignInOrSignUpWithGoogle';
+import { SignUpWithGoogle } from './SignUpWithGoogle';
 
 export default {
   CurrentAuth,
@@ -13,5 +13,5 @@ export default {
   ForgotPassword,
   CheckPasswordToken,
   ResetPassword,
-  //   SignInOrSignUpWithGoogle,
+  SignUpWithGoogle,
 };
